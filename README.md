@@ -1,2 +1,5 @@
-# stockview
-App for viewing stocks.
+Welcome to Stockview
+=================
+
+Used for dynamically checking stocks' values.
+------------
