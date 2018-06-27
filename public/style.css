@@ -1,0 +1,7 @@
+/* styles */
+/* called by your view template */
+h1{
+font-family: Shrikhand;
+color: white;
+text-align: center;
+}
