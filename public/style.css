@@ -5,3 +5,37 @@ font-family: Shrikhand;
 color: white;
 text-align: center;
 }
+li {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+}
+/*
+tr:nth-child(even) {
+    background-color: #dddddd;
+}*/
+ul{
+    border-collapse: collapse;
+    width: 30%;
+    font-family: Shrikhand;
+    background-color: white;
+    color: #000000;
+}
+.close{
+  color: red;
+}
+.close:focus {
+  outline:0;
+}
+input {
+  border-radius: 10px;
+}
+input:focus{
+  outline:0px;
+}
+td, th{
+  text-align: center;
+}
+ul {
+  list-style-type: none;
+}
