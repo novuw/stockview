@@ -10,7 +10,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>StockView</title>
+    <title>CryptoView</title>
     <meta name="description" content="A webapp for viewing stocks">
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -23,29 +23,69 @@
     <link rel="stylesheet" href="/style.css">
     <link href="https://fonts.googleapis.com/css?family=Shrikhand&effect=3d" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
     <!-- import the webpage's client-side javascript file -->
     <script src="/client.js" defer></script>
   </head>
   <body style="background-color: black">
     <div>
       <h1>
-        StockView
+        CryptoView
       </h1>
       <center>
-      <div style="width: 40%">
+        <form id="add" action="">
+          <input id="curr" type="text" placeholder="  Add new currency abbrev."/>
+          <input type="submit"/>
+        </form>
+      <div style="width: 30%">
         <canvas id="myChart" width="400" height="400"></canvas>
       </div>
       </center>
     </div>
+    <div>
+    <center>
+      <ul id="insert">
+        <li style="text-decoration: underline">Displayed Stocks<button type="button" class="close delete" aria-label="Close"><span aria-hidden="true">&times;</span></button></li>
+        <li id="0">Monero</li>
+      </ul>
+    </center>
+    </div>
     <script>
+      $(function(){
+        var socket = io();
+        $('.delete').on('click', function(){
+            socket.emit('delete');
+            return false;
+        });
+        $('#add').submit(function(){
+            socket.emit('add', $('#curr').val());
+            $('#curr').val('');
+            return false;
+        });
+        socket.on('delete', function(){
+                var ct = 0;
+                alert('Removing Currency');
+                $('#'+ct.toString()).remove();
+                ct++;
+            });
+        socket.on('add', function(msg){
+                var ct = 1;
+                $('#insert').append($('<li>').text(msg).attr('id', ct.toString()));
+                ct++;
+            });
+      });
+
+      var url = 'https://www.alphavantage.co/query?apikey=X4YA3HVFM0CLY77R&symbol=XMR&function=DIGITAL_CURRENCY_DAILY&market=USD';
+      function mySuccess(data){
+        var values = data['Time Series (Digital Currency Daily)'];
         var ctx = $("#myChart");
         var myChart = new Chart(ctx, {
-         type: 'line',
-    data: {
-        labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
+        type: 'line',
+        data: {
+        labels: ['10', '9', '8', '7', '6', '5', '4', '3', '2', '1'],
         datasets: [{
-            label: '# of Votes',
-            data: [12, 19, 3, 5, 2, 3],
+            label: 'Opening Price',
+            data: [values['2018-06-27']['1a. open (USD)'],values['2018-06-26']['1a. open (USD)'],values['2018-06-25']['1a. open (USD)'],values['2018-06-24']['1a. open (USD)'],values['2018-06-23']['1a. open (USD)'],values['2018-06-22']['1a. open (USD)'],values['2018-06-21']['1a. open (USD)'],values['2018-06-20']['1a. open (USD)'],values['2018-06-19']['1a. open (USD)'],values['2018-06-18']['1a. open (USD)']],
             backgroundColor: [
                 'rgba(255, 99, 132, 0.2)',
                 'rgba(54, 162, 235, 0.2)',
@@ -70,10 +110,27 @@
             yAxes: [{
                 ticks: {
                     beginAtZero:true
-                }
+                },
+                
             }]
         }
     }
+        });
+        }
+        $(document).ready(function(){
+          $.ajax({
+            url: url,
+            /*headers: {
+            'X-Content-Type-Options': 'nosniff',
+            "Content-Type": 'application/javascript'
+            },*/
+            type: "GET",
+            dataType: 'json',
+            success: mySuccess,
+            error: function(json){
+                alert('error!');
+            }
+          });
         });
     </script>
   </body>
